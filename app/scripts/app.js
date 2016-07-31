@@ -4,6 +4,7 @@
     angular.module('RPIWebAdmin', ['RPIWebAdmin.controllers','ngRoute','ngMaterial']);
 
     angular.module('RPIWebAdmin.controllers', ['RPIWebAdmin.services']);
+    //angular.module('RPIWebAdmin.controllers').var
     //angular.module('RPIWebAdmin.controllers', ['RPIWebAdmin.services', 'RPIWebAdmin.utils']);
 
     //angular.module('RPIWebAdmin.services', ['ngResource']);

@@ -20,6 +20,11 @@
         controller: 'megaController',
         controllerAs: 'megaCtrl'
       })
+      .when('/mega/login', {
+        templateUrl: 'views/mega.login.tpl.html',
+        controller: 'megaLoginController',
+        controllerAs: 'megaLoginCtrl'
+      })
       .when('/informacion', {
         templateUrl: 'views/informacion.tpl.html',
         controller: 'informacionController',

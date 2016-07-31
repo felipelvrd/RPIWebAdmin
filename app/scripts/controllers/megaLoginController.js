@@ -1,12 +1,16 @@
 /**
- * Created by felipe on 28/07/16.
+ * Created by felipe on 30/07/16.
  */
 
 (function () {
     'use strict';
 
-    function megaController($scope) {
-        var megaCtrl = this;
+    function megaLoginController($scope) {
+        var megaLoginCtrl = this;
+
+
+        megaLoginCtrl.email = '';
+        megaLoginCtrl.contrasenna = '';
 
         var mysocket = new WebSocket("ws://localhost:8888/mega");
 
@@ -24,11 +28,23 @@
 
         mysocket.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            if (data['cmd'] = 'isLogged'){
-                if (data['status'] == false){
-                    window.location.href = '#mega/login';
-                }
+            switch (data['cmd']) {
+                case 'isLogged':
+                    if (data['status'] == true) {
+                        window.location.href = '#mega';
+                    }
+                    break;
+
+                case 'login':
+
+                    if (data['errorCode'] == 0) {
+                        window.location.href = '#mega';
+                    } else {
+                        alert(evt.data)
+                    }
+                    break;
             }
+
         };
 
         mysocket.onclose = function (evt) {
@@ -39,11 +55,11 @@
             //alert("ERROR: " + evt.data);
         }
 
-        megaCtrl.enviar = function () {
+        megaLoginCtrl.enviar = function () {
             var data = {
                 cmd: 'login',
-                email: megaCtrl.email,
-                contrasenna: megaCtrl.contrasenna
+                email: megaLoginCtrl.email,
+                contrasenna: megaLoginCtrl.contrasenna
             };
             mysocket.send(JSON.stringify(data));
 
@@ -52,5 +68,5 @@
 
     angular
         .module('RPIWebAdmin.controllers')
-        .controller('megaController', megaController);
+        .controller('megaLoginController', megaLoginController);
 })();
