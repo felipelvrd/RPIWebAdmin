@@ -3,28 +3,31 @@
  */
 
 (function () {
-    'use strict';
-    function config($routeProvider) {
-        $routeProvider
+  'use strict';
+  function config($routeProvider) {
+    $routeProvider
+      .when('/', {
+        redirectTo: '/home'
 
-            .when('/', {
-                templateUrl: 'views/home.tpl.html',
-                controller: 'HomeController',
-                controllerAs: 'HomeCtrl'
-            })
-            .when('/mega',{
-                templateUrl: 'views/mega.tpl.html',
-                controller: 'MegaController',
-                controllerAs: 'MegaCtrl'
-            })
-            .when('/home', {
-                templateUrl: 'views/home.tpl.html',
-                controller: 'HomeController',
-                controllerAs: 'HomeCtrl'
-            });
+      })
+      .when('/home', {
+        templateUrl: 'views/home.tpl.html',
+        controller: 'homeController',
+        controllerAs: 'homeCtrl'
+      })
+      .when('/mega', {
+        templateUrl: 'views/mega.tpl.html',
+        controller: 'megaController',
+        controllerAs: 'megaCtrl'
+      })
+      .when('/informacion', {
+        templateUrl: 'views/informacion.tpl.html',
+        controller: 'informacionController',
+        controllerAs: 'informacionCtrl'
+      });
 
-    }
+  }
 
-    angular.module('RPIWebAdmin').config(config);
+  angular.module('RPIWebAdmin').config(config);
 
 })();

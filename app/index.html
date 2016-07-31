@@ -17,28 +17,50 @@
     <link rel="stylesheet" href="lib/angular-material/angular-material.css" />
     <!-- endbower -->
     <!-- inject:css -->
+    <link rel="stylesheet" href="/stylesheets/main.css">
     <!-- endinject -->
     <!-- endbuild -->
 
 </head>
-<body layout="column">
-<!--[if lt IE 8]>
-<p class="browsehappy">Estás usando un navegador <strong>desactualizado</strong>.Por favor <a
-        href="http://browsehappy.com/">actualiza tu navegador</a>Para mejorar la experiencia..</p>
-<![endif]-->
-<div>
+<body ng-cloak layout="column" ng-controller="navegacionController as nav">
 
-  <nav>
-    <a href="/">inicio</a>
-    <a href="#mega">mega</a>
-    <a href="#info">info</a>
-  </nav>
+    <!-- Container #1 (see wireframe) -->
+    <md-toolbar layout="row">
+      <md-button class="menu" hide-gt-sm ng-click="nav.toggleList()">
+        <md-icon md-svg-icon="menu"></md-icon>
+      </md-button>
+      <h3>RPIWebAdmin</h3>
+    </md-toolbar>
 
-  <div class="container-fluid">
-        <div ng-view></div>
-  </div>
+    <!-- Container #2 -->
+    <div class="container" layout="row" flex>
 
-</div>
+        <!-- Container #3 -->
+        <md-sidenav
+          ng-click="nav.toggleList()"
+          md-component-id="left"
+          md-is-locked-open="$mdMedia('gt-sm')"
+          class="md-whiteframe-4dp">
+          <md-list>
+            <md-list-item ng-repeat="p in nav.paginas">
+                <md-button ng-click="nav.selectPagina(p)" ng-class="{'selected' : p === nav.selected }">
+                  <md-icon md-svg-icon="{{p.icono}}" class="avatar"></md-icon>
+                  {{p.titulo}}
+                </md-button>
+            </md-list-item>
+          </md-list>
+        </md-sidenav>
+
+        <!-- Container #4 -->
+        <md-content flex id="content">
+          <!--md-icon md-svg-icon="{{nav.selected.icono}}" class="avatar"></md-icon>
+          <h2>{{nav.selected.titulo}}</h2>
+          <p>{{nav.selected.content}}</p>-->
+          <div ng-view></div>
+        </md-content>
+
+    </div>
+
 <!-- build:js js/vendor.min.js -->
 <!-- bower:js -->
 <script src="lib/angular/angular.js"></script>
@@ -54,7 +76,10 @@
 <script src="/scripts/app.js"></script>
 <script src="/scripts/routes.js"></script>
 <script src="/scripts/controllers/homeController.js"></script>
+<script src="/scripts/controllers/informacionController.js"></script>
 <script src="/scripts/controllers/megaController.js"></script>
+<script src="/scripts/controllers/navegacionController.js"></script>
+<script src="/scripts/services/navegacion.js"></script>
 <!-- endinject -->
 <!-- endbuild -->
 </body>

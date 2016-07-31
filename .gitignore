@@ -3,4 +3,5 @@ dist/*
 node_modules
 app/lib
 .idea
+.directory
 app/scripts/templates.js

@@ -5,10 +5,10 @@
 (function () {
     'use strict';
 
-    function MegaController() {
+    function megaController() {
     }
 
     angular
         .module('RPIWebAdmin.controllers')
-        .controller('MegaController', MegaController);
+        .controller('megaController', megaController);
 })();

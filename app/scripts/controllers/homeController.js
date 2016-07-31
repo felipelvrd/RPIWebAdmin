@@ -5,10 +5,10 @@
 (function () {
     'use strict';
 
-    function HomeController() {
+    function homeController() {
     }
 
     angular
         .module('RPIWebAdmin.controllers')
-        .controller('HomeController', HomeController);
+        .controller('homeController', homeController);
 })();
