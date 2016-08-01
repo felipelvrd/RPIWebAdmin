@@ -7,12 +7,12 @@
 
     function megaController($scope) {
         var megaCtrl = this;
-
-        var mysocket = new WebSocket("ws://localhost:8888/mega");
+        megaCtrl.nodos = [];
+        var mysocket = new WebSocket('ws://localhost:8888/mega');
 
         $scope.$on('$destroy', function onDestroy() {
             mysocket.close();
-        })
+        });
 
 
         mysocket.onopen = function (evt) {
@@ -24,10 +24,20 @@
 
         mysocket.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            if (data['cmd'] = 'isLogged'){
-                if (data['status'] == false){
+            if (data.cmd === 'isLogged'){
+                if (data.status === false){
                     window.location.href = '#mega/login';
+                } else{
+                    var cmd = {
+                        cmd: 'listaNodos'
+                    };
+                    mysocket.send(JSON.stringify(cmd));
                 }
+            } if (data.cmd === 'listaNodos'){
+
+                megaCtrl.nodos = data.nodos;
+                //megaCtrl.nodos = [{nombre: 'primero'}];
+                $scope.$apply();
             }
         };
 
@@ -40,6 +50,7 @@
         }
 
         megaCtrl.enviar = function () {
+
             var data = {
                 cmd: 'login',
                 email: megaCtrl.email,

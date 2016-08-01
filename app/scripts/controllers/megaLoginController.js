@@ -6,17 +6,24 @@
     'use strict';
 
     function megaLoginController($scope) {
-        var megaLoginCtrl = this;
 
+
+        $scope.project = {
+    description: 'Nuclear Missile Defense System',
+    rate: 500
+  };
+
+        var megaLoginCtrl = this;
+        megaLoginCtrl.inLogin = false;
 
         megaLoginCtrl.email = '';
         megaLoginCtrl.contrasenna = '';
 
-        var mysocket = new WebSocket("ws://localhost:8888/mega");
+        var mysocket = new WebSocket('ws://localhost:8888/mega');
 
         $scope.$on('$destroy', function onDestroy() {
             mysocket.close();
-        })
+        });
 
 
         mysocket.onopen = function (evt) {
@@ -28,23 +35,23 @@
 
         mysocket.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            switch (data['cmd']) {
+            switch (data.cmd) {
                 case 'isLogged':
-                    if (data['status'] == true) {
+                    if (data.status === true) {
                         window.location.href = '#mega';
                     }
                     break;
 
                 case 'login':
-
-                    if (data['errorCode'] == 0) {
+                    if (data.errorCode === 0) {
                         window.location.href = '#mega';
                     } else {
-                        alert(evt.data)
+                        megaLoginCtrl.inLogin = false;
+                        $scope.$apply();
+                        alert(evt.data);
                     }
                     break;
             }
-
         };
 
         mysocket.onclose = function (evt) {
@@ -53,17 +60,17 @@
 
         mysocket.onerror = function (evt) {
             //alert("ERROR: " + evt.data);
-        }
+        };
 
         megaLoginCtrl.enviar = function () {
+            megaLoginCtrl.inLogin = true;
             var data = {
                 cmd: 'login',
                 email: megaLoginCtrl.email,
                 contrasenna: megaLoginCtrl.contrasenna
             };
             mysocket.send(JSON.stringify(data));
-
-        }
+        };
     }
 
     angular

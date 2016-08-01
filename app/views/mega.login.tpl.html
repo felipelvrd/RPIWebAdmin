@@ -1,5 +1,37 @@
 <h1>mega</h1>
 <h2>login</h2>
-<input type="email" name="email" ng-model="megaLoginCtrl.email">
-<input type="password" name="contrasenna" ng-model="megaLoginCtrl.contrasenna">
-<input type="button" value="Enviar" ng-click="megaLoginCtrl.enviar()">
+
+<md-content layout-padding>
+    <form name="loginForm">
+
+        <md-input-container class="md-block">
+            <label>E-Mail</label>
+            <input required type="email" name="Email" ng-model="megaLoginCtrl.email"
+                   ng-pattern="/^.+@.+\..+$/"/>
+            <div ng-messages="loginForm.Email.$error" md-auto-hide="false" role="alert">
+                <div ng-message-exp="['required', 'pattern']">
+                    Se requiere un e-mail válido.
+                </div>
+            </div>
+        </md-input-container>
+
+        <md-input-container class="md-block">
+            <label>Contraseña</label>
+            <input required type="password" name="Contrasenna" ng-model="megaLoginCtrl.contrasenna"/>
+            <div ng-messages="loginForm.Contrasenna.$error" md-auto-hide="false" role="alert">
+                <div ng-message-exp="['required']">
+                    Contraseña es requerida.
+                </div>
+            </div>
+        </md-input-container>
+
+
+        <md-button class="md-raised md-primary" ng-disabled="loginForm.$invalid || megaLoginCtrl.inLogin" ng-click="megaLoginCtrl.enviar()">
+           <div layout="row">
+               Iniciar
+               <md-progress-circular md-mode="indeterminate" md-diameter="36px" ng-hide="!megaLoginCtrl.inLogin">
+               </md-progress-circular>
+           </div>
+        </md-button>
+    </form>
+</md-content>

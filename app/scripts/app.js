@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('RPIWebAdmin', ['RPIWebAdmin.controllers','ngRoute','ngMaterial']);
+    angular.module('RPIWebAdmin', ['RPIWebAdmin.controllers','ngRoute','ngMaterial','ngMessages']);
 
     angular.module('RPIWebAdmin.controllers', ['RPIWebAdmin.services']);
     //angular.module('RPIWebAdmin.controllers').var

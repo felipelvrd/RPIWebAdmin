@@ -1,13 +1,17 @@
 import json
 
-from mega import MegaApi
+from mega import MegaApi, MegaNode
 
 from WebSocketServer.megaRPI.listener.loginListener import LoginListener
+from WebSocketServer.megaRPI.listener.listener import AppListener
+from WebSocketServer.megaRPI.listener.listaNodosListener import ListaNodosListener
 
 
 class MegaSocket:
     def __init__(self):
         self._api = MegaApi('oowWWYRZ', None, None, 'Python megacli')
+        #self.listener = AppListener()
+        #self._api.addListener(self.listener)
         self.cli = []
 
     def login(self, usuario, contrasenna, webSocket):
@@ -33,6 +37,14 @@ class MegaSocket:
         jData = json.dumps(data)
         webSocket.write_message(jData)
 
+    def listaNodos(self, webSocket):
+        listaNodosListener = ListaNodosListener(webSocket, self.cli)
+        self.cli.append(listaNodosListener)
+        self._api.fetchNodes(listaNodosListener)
+
+
+
+
 
     def recibidor(self, webSocket, data):
         jData = json.loads(data.decode('utf-8'))
@@ -42,6 +54,10 @@ class MegaSocket:
             self.getEmail(webSocket)
         if jData['cmd'] == 'isLogged':
             self.isLogged(webSocket)
+        if jData['cmd'] == 'listaNodos':
+            self.listaNodos(webSocket)
+
+
 
 
 

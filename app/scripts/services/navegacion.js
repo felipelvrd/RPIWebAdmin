@@ -31,7 +31,7 @@
           // Simulate async nature of real remote calls
           return $q.when(paginas);
         }
-      }
+      };
     }
 
     angular

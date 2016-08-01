@@ -6,35 +6,30 @@
     'use strict';
 
     function navegacionController(navegacion, $mdSidenav) {
-      var self = this;
 
-      self.selected     = null;
-      self.paginas        = [ ];
-      self.selectPagina   = selectPagina;
-      self.toggleList   = toggleUsersList;
+        var navegacionCtrl = this;
 
-      // Load all registered users
-
-      navegacion
-      .loadAllPaginas()
-      .then( function( paginas ) {
-        self.paginas    = [].concat(paginas);
-        self.selected = paginas[0];
-      });
+        navegacionCtrl.selected = null;
+        navegacionCtrl.paginas = [];
 
 
-      function toggleUsersList() {
-      $mdSidenav('left').toggle();
-    }
+        navegacion
+            .loadAllPaginas()
+            .then(function (paginas) {
+                navegacionCtrl.paginas = [].concat(paginas);
+                navegacionCtrl.selected = paginas[0];
+            });
 
-  /**
-    * Select the current avatars
-    * @param menuId
-    */
-     function selectPagina (pagina) {
-       self.selected =  pagina;
-        window.location.href = pagina.ruta;
-     }
+
+        navegacionCtrl.toggleList = function () {
+            $mdSidenav('left').toggle();
+        };
+
+        navegacionCtrl.selectPagina = function (pagina) {
+            navegacionCtrl.selected = pagina;
+            window.location.href = pagina.ruta;
+        };
+
     }
 
     angular
