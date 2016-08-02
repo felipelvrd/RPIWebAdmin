@@ -1,5 +1,11 @@
-<h1>mega</h1>
+<h1>Mega</h1>
 
+<div class="container" ng-hide="!megaCtrl.cargandoNodos">
+    <md-progress-linear md-mode="query"></md-progress-linear>
+    <div class="bottom-block">
+      <span>Cargando lista de nodos...</span>
+    </div>
+</div>
 
 <ul>
     <li ng-repeat="n in megaCtrl.nodos">

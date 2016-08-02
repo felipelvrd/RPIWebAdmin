@@ -8,54 +8,46 @@ from WebSocketServer.megaRPI.listener.listaNodosListener import ListaNodosListen
 
 
 class MegaSocket:
-    def __init__(self):
-        self._api = MegaApi('oowWWYRZ', None, None, 'Python megacli')
-        #self.listener = AppListener()
-        #self._api.addListener(self.listener)
-        self.cli = []
+    def __init__(self, api, web_socket_handler):
+        self._api = api
+        self.webSocketHandler = web_socket_handler
+        self.loginListener = LoginListener(self.webSocketHandler)
+        self.listaNodosListener = ListaNodosListener(self.webSocketHandler)
 
-    def login(self, usuario, contrasenna, webSocket):
-        loginListener = LoginListener(webSocket, self.cli)
-        self.cli.append(loginListener)
-        self._api.login(str(usuario), str(contrasenna), loginListener)
+    def login(self, usuario, contrasenna):
+        self._api.login(str(usuario), str(contrasenna), self.loginListener)
 
-    def getEmail(self,webSocket):
+    def get_email(self):
         if not self._api.isLoggedIn():
             print('INFO: Not logged in')
         else:
             print self._api.getMyEmail()
         #webSocket.write_message(email)
 
-    def isLogged(self, webSocket):
-        islogged = False
+    def is_logged(self):
+        is_logged = False
         if self._api.isLoggedIn():
-            islogged = True
+            is_logged = True
         data = {
             'cmd': 'isLogged',
-            'status': islogged
+            'status': is_logged
         }
-        jData = json.dumps(data)
-        webSocket.write_message(jData)
+        j_data = json.dumps(data)
+        self.webSocketHandler.write_message(j_data)
 
-    def listaNodos(self, webSocket):
-        listaNodosListener = ListaNodosListener(webSocket, self.cli)
-        self.cli.append(listaNodosListener)
-        self._api.fetchNodes(listaNodosListener)
+    def lista_nodos(self):
+        self._api.fetchNodes(self.listaNodosListener)
 
-
-
-
-
-    def recibidor(self, webSocket, data):
-        jData = json.loads(data.decode('utf-8'))
-        if jData['cmd'] == 'login':
-            self.login(jData['email'], jData['contrasenna'], webSocket)
-        if jData['cmd'] == 'getEmail':
-            self.getEmail(webSocket)
-        if jData['cmd'] == 'isLogged':
-            self.isLogged(webSocket)
-        if jData['cmd'] == 'listaNodos':
-            self.listaNodos(webSocket)
+    def recibidor(self, data):
+        j_data = json.loads(data.decode('utf-8'))
+        if j_data['cmd'] == 'login':
+            self.login(j_data['email'], j_data['contrasenna'])
+        if j_data['cmd'] == 'getEmail':
+            self.get_email()
+        if j_data['cmd'] == 'isLogged':
+            self.is_logged()
+        if j_data['cmd'] == 'listaNodos':
+            self.lista_nodos()
 
 
 

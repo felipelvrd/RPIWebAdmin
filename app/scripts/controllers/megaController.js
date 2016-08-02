@@ -9,6 +9,7 @@
         var megaCtrl = this;
         megaCtrl.nodos = [];
         var mysocket = new WebSocket('ws://localhost:8888/mega');
+        megaCtrl.cargandoNodos = true;
 
         $scope.$on('$destroy', function onDestroy() {
             mysocket.close();
@@ -36,6 +37,7 @@
             } if (data.cmd === 'listaNodos'){
 
                 megaCtrl.nodos = data.nodos;
+                megaCtrl.cargandoNodos = false;
                 //megaCtrl.nodos = [{nombre: 'primero'}];
                 $scope.$apply();
             }

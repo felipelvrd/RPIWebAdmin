@@ -4,6 +4,8 @@
 <md-content layout-padding>
     <form name="loginForm">
 
+        <fieldset class="standard" ng-disabled="megaLoginCtrl.inLogin" >
+        <legend>Cuenta:</legend>
         <md-input-container class="md-block">
             <label>E-Mail</label>
             <input required type="email" name="Email" ng-model="megaLoginCtrl.email"
@@ -33,5 +35,6 @@
                </md-progress-circular>
            </div>
         </md-button>
+            </fieldset>
     </form>
 </md-content>

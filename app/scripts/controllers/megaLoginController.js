@@ -5,13 +5,22 @@
 (function () {
     'use strict';
 
-    function megaLoginController($scope) {
+    function megaLoginController($scope, $mdToast, $mdDialog) {
 
 
         $scope.project = {
-    description: 'Nuclear Missile Defense System',
-    rate: 500
-  };
+            description: 'Nuclear Missile Defense System',
+            rate: 500
+        };
+
+
+        /* $mdToast.show(
+         $mdToast.simple()
+         .textContent('Simple Toast!')
+         .position('bottom right')
+         .hideDelay(3000)
+         );*/
+
 
         var megaLoginCtrl = this;
         megaLoginCtrl.inLogin = false;
@@ -33,6 +42,7 @@
             mysocket.send(JSON.stringify(cmd));
         };
 
+
         mysocket.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
             switch (data.cmd) {
@@ -47,8 +57,21 @@
                         window.location.href = '#mega';
                     } else {
                         megaLoginCtrl.inLogin = false;
+
                         $scope.$apply();
-                        alert(evt.data);
+                        $mdDialog.show(
+                            $mdDialog.alert()
+                                .parent(angular.element(document.querySelector('#popupContainer')))
+                                .clickOutsideToClose(true)
+                                .title('Código de error: ' + data.errorCode)
+                                .textContent('Ocurrio un error al intentar iniciar sesión, descripción del error: ' +
+                                             data.errorString)
+                                .ariaLabel('Error inicio de sesion')
+                                .ok('OK')
+                            //.targetEvent(evt)
+                        );
+
+
                     }
                     break;
             }

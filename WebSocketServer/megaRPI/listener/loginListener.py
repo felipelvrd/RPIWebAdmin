@@ -3,10 +3,9 @@ import json
 
 
 class LoginListener(MegaRequestListener):
-    def __init__(self, webSocket, cli):
+    def __init__(self, webSocket):
         super(LoginListener, self).__init__()
         self.webSocket = webSocket
-        self.cli = cli
 
     def onRequestFinish(self, api, request, e):
         data = {
@@ -16,4 +15,3 @@ class LoginListener(MegaRequestListener):
         }
         jData = json.dumps(data)
         self.webSocket.write_message(jData)
-        self.cli.remove(self)

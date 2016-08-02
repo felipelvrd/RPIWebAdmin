@@ -3,10 +3,9 @@ import json
 
 
 class ListaNodosListener(MegaRequestListener):
-    def __init__(self, webSocket, cli):
+    def __init__(self, webSocket):
         super(ListaNodosListener, self).__init__()
         self.webSocket = webSocket
-        self.cli = cli
 
     def onRequestFinish(self, api, request, e):
 
@@ -39,5 +38,7 @@ class ListaNodosListener(MegaRequestListener):
         }
 
         jData = json.dumps(data)
-        self.webSocket.write_message(jData)
-        self.cli.remove(self)
+
+        if self.webSocket.isOpen:
+            self.webSocket.write_message(jData)
+
