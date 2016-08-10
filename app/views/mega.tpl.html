@@ -1,14 +1,64 @@
 <h1>Mega</h1>
 
+<div ng-hide="megaCtrl.isLoged">
+    <h2>login</h2>
+
+    <md-content layout-padding>
+        <form name="loginForm">
+
+            <fieldset class="standard" ng-disabled="megaCtrl.inLogin">
+                <legend>Cuenta:</legend>
+                <md-input-container class="md-block">
+                    <label>E-Mail</label>
+                    <input required type="email" name="Email" ng-model="megaCtrl.email"
+                           ng-pattern="/^.+@.+\..+$/"/>
+                    <div ng-messages="loginForm.Email.$error" md-auto-hide="false" role="alert">
+                        <div ng-message-exp="['required', 'pattern']">
+                            Se requiere un e-mail válido.
+                        </div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Contraseña</label>
+                    <input required type="password" name="Contrasenna" ng-model="megaCtrl.contrasenna"/>
+                    <div ng-messages="loginForm.Contrasenna.$error" md-auto-hide="false" role="alert">
+                        <div ng-message-exp="['required']">
+                            Contraseña es requerida.
+                        </div>
+                    </div>
+                </md-input-container>
+
+
+                <md-button class="md-raised md-primary" ng-disabled="loginForm.$invalid || megaCtrl.inLogin"
+                           ng-click="megaCtrl.enviar()">
+                    <div layout="row">
+                        Iniciar
+                        <md-progress-circular md-mode="indeterminate" md-diameter="36px"
+                                              ng-hide="!megaCtrl.inLogin">
+                        </md-progress-circular>
+                    </div>
+                </md-button>
+            </fieldset>
+        </form>
+    </md-content>
+</div>
+
+<div ng-hide="!megaCtrl.isLoged">
 <div class="container" ng-hide="!megaCtrl.cargandoNodos">
     <md-progress-linear md-mode="query"></md-progress-linear>
     <div class="bottom-block">
-      <span>Cargando lista de nodos...</span>
+        <span>Cargando lista de nodos...</span>
     </div>
 </div>
 
 <ul>
     <li ng-repeat="n in megaCtrl.nodos">
-       {{n.nombre}}
+        <a ng-click="megaCtrl.descargar(n.nombre)">{{n.nombre}}</a>
     </li>
 </ul>
+
+<h3>Descarga Activa</h3>
+<md-progress-linear md-mode="determinate" value="{{megaCtrl.descarga.porcentaje}}"></md-progress-linear>
+{{megaCtrl.descarga.nombre}} - {{megaCtrl.descarga.velocidad/1024 | number: 2}}KB/s
+</div>

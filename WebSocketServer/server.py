@@ -1,30 +1,26 @@
 from tornado import web, ioloop
 from tornado.websocket import WebSocketHandler
-from WebSocketServer.megaRPI.megaSocket import MegaSocket
-from mega import MegaApi
+from WebSocketServer.megaRPI.megaServer import MegaServer
 
-_api = MegaApi('oowWWYRZ', None, None, 'megaRPI')
+mega_server = MegaServer()
 
 
 class MegaWebSocketHandler(WebSocketHandler):
     def __init__(self, *args, **kwargs):
-        global _api
-        self.megaRPI = MegaSocket(_api, self)
-        self.isOpen = False
         super(MegaWebSocketHandler, self).__init__(*args, **kwargs)
 
     def data_received(self, chunk):
         pass
 
     def open(self):
-        self.isOpen = True
+        mega_server.agregar_cliente(self)
         print("WebSocket opened")
 
     def on_message(self, message):
-        self.megaRPI.recibidor(message)
+        mega_server.enrutador(self, message)
 
     def on_close(self):
-        self.isOpen = False
+        mega_server.eliminar_cliente(self)
         print("WebSocket closed")
 
     def check_origin(self, origin):

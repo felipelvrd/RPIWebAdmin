@@ -5,11 +5,17 @@
 (function () {
     'use strict';
 
-    function megaController($scope) {
+    function megaController($scope,$mdDialog) {
         var megaCtrl = this;
+        megaCtrl.salida = '';
         megaCtrl.nodos = [];
         var mysocket = new WebSocket('ws://localhost:8888/mega');
         megaCtrl.cargandoNodos = true;
+        megaCtrl.isLoged = true;
+        megaCtrl.email = '';
+        megaCtrl.contrasenna = '';
+        megaCtrl.inLogin = false;
+
 
         $scope.$on('$destroy', function onDestroy() {
             mysocket.close();
@@ -25,22 +31,66 @@
 
         mysocket.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            if (data.cmd === 'isLogged'){
-                if (data.status === false){
-                    window.location.href = '#mega/login';
-                } else{
-                    var cmd = {
-                        cmd: 'listaNodos'
-                    };
-                    mysocket.send(JSON.stringify(cmd));
-                }
-            } if (data.cmd === 'listaNodos'){
 
-                megaCtrl.nodos = data.nodos;
-                megaCtrl.cargandoNodos = false;
-                //megaCtrl.nodos = [{nombre: 'primero'}];
-                $scope.$apply();
+            switch (data.cmd) {
+
+                case 'isLogged':
+                    if (data.status === false) {
+                        megaCtrl.isLoged = false;
+                        //window.location.href = '#mega/login';
+                    } else {
+                        megaCtrl.isLoged = true;
+                        var cmd = {
+                            cmd: 'listaNodos'
+                        };
+                        mysocket.send(JSON.stringify(cmd));
+                    }
+                    break;
+                case 'listaNodos':
+
+                    megaCtrl.nodos = data.nodos;
+                    megaCtrl.cargandoNodos = false;
+                    //megaCtrl.nodos = [{nombre: 'primero'}];
+                    $scope.$apply();
+                    break;
+                case 'downloadUpdate':
+                    megaCtrl.descarga = data;
+                    megaCtrl.descarga.porcentaje = megaCtrl.descarga.bytesTransferidos * 100 / megaCtrl.descarga.totalBytes;
+                    $scope.$apply();
+                    break;
+                case 'login':
+                    if (data.errorCode === 0) {
+                        window.location.href = '#mega';
+                    } else {
+                        megaCtrl.inLogin = false;
+
+                        $scope.$apply();
+                        $mdDialog.show(
+                            $mdDialog.alert()
+                                .parent(angular.element(document.querySelector('#popupContainer')))
+                                .clickOutsideToClose(true)
+                                .title('Código de error: ' + data.errorCode)
+                                .textContent('Ocurrio un error al intentar iniciar sesión, descripción del error: ' +
+                                    data.errorString)
+                                .ariaLabel('Error inicio de sesion')
+                                .ok('OK')
+                            //.targetEvent(evt)
+                        );
+
+
+                    }
+                    break;
             }
+        };
+
+        megaCtrl.enviar = function () {
+            megaCtrl.inLogin = true;
+            var data = {
+                cmd: 'login',
+                email: megaCtrl.email,
+                contrasenna: megaCtrl.contrasenna
+            };
+            mysocket.send(JSON.stringify(data));
         };
 
         mysocket.onclose = function (evt) {
@@ -51,15 +101,12 @@
             //alert("ERROR: " + evt.data);
         }
 
-        megaCtrl.enviar = function () {
-
+        megaCtrl.descargar = function (nombre) {
             var data = {
-                cmd: 'login',
-                email: megaCtrl.email,
-                contrasenna: megaCtrl.contrasenna
+                cmd: 'descargar',
+                nombre: nombre
             };
             mysocket.send(JSON.stringify(data));
-
         }
     }
 
