@@ -45,20 +45,40 @@
 </div>
 
 <div ng-hide="!megaCtrl.isLoged">
-<div class="container" ng-hide="!megaCtrl.cargandoNodos">
-    <md-progress-linear md-mode="query"></md-progress-linear>
-    <div class="bottom-block">
-        <span>Cargando lista de nodos...</span>
+    <div class="container" ng-hide="!megaCtrl.cargandoNodos">
+        <md-progress-linear md-mode="query"></md-progress-linear>
+        <div class="bottom-block">
+            <span>Cargando lista de nodos...</span>
+        </div>
     </div>
-</div>
 
-<ul>
-    <li ng-repeat="n in megaCtrl.nodos">
-        <a ng-click="megaCtrl.descargar(n.nombre)">{{n.nombre}}</a>
-    </li>
-</ul>
+    <div>
 
-<h3>Descarga Activa</h3>
-<md-progress-linear md-mode="determinate" value="{{megaCtrl.descarga.porcentaje}}"></md-progress-linear>
-{{megaCtrl.descarga.nombre}} - {{megaCtrl.descarga.velocidad/1024 | number: 2}}KB/s
+        <md-content ng-hide="megaCtrl.cargandoNodos">
+            <md-list flex>
+                <md-subheader class="md-no-sticky">Lista de archivos</md-subheader>
+                <md-list-item class="md-3-line" ng-repeat="n in megaCtrl.nodos" ng-click="null">
+                    <i class="fa fa-3x fa-pull-left fa-border margin-derecha"
+                       ng-class="(n.tipo ==='F') ? 'fa-folder' : 'fa-file'" aria-hidden="true"></i>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>{{ n.nombre }}</h3>
+                        <h4 ng-if="n.tipo === 'A'">{{ n.tamanno/1024/1024 |number:2 }} MB</h4>
+                    </div>
+                </md-list-item>
+
+            </md-list>
+        </md-content>
+
+    </div>
+
+
+    <!--<ul>
+        <li ng-repeat="n in megaCtrl.nodos">
+            <a ng-click="megaCtrl.descargar(n.nombre)">{{n.nombre}}</a>
+        </li>
+    </ul>-->
+
+    <h3>Descarga Activa</h3>
+    <md-progress-linear md-mode="determinate" value="{{megaCtrl.descarga.porcentaje}}"></md-progress-linear>
+    {{megaCtrl.descarga.nombre}} - {{megaCtrl.descarga.velocidad/1024 | number: 2}}KB/s
 </div>
