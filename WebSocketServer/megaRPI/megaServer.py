@@ -26,20 +26,24 @@ class MegaServer:
         j_data = json.loads(mensaje.decode('utf-8'))
         megaCliente = next(c for c in self.clientes if c.web_socket_handler == web_socket_handler)
         cmd = j_data['cmd']
+
         if cmd == 'isLogged':
             megaCliente.is_logged()
         elif cmd == 'login':
-            megaCliente.login(str(j_data['email']), str(j_data['contrasenna']))
+            megaCliente.login(j_data)
         elif cmd == 'listaNodos':
-            megaCliente.lista_nodos()
+            megaCliente.listaNodos()
         elif cmd == 'descargar':
-            self.descargar(j_data['nombre'])
+            self.descargar(j_data)
+        elif cmd == 'cd':
+            megaCliente.cd(j_data)
 
-    def descargar(self, nombre):
+    def descargar(self, j_data):
+        nombre = str(j_data['nombre'])
         cwd = self._api.getRootNode()
         node = self._api.getNodeByPath(str(nombre), cwd)
         if node == None:
-            self.write_message('Node not found')
+            print ('Node not found')
             return
         self._api.startDownload(node, './', self.DownloadListener)
 

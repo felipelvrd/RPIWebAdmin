@@ -1,5 +1,6 @@
 from mega import MegaRequestListener, MegaError, MegaNode, MegaTransferListener
-import json
+
+from WebSocketServer.megaRPI.utils import enviar_cliente
 
 
 class LoginListener(MegaRequestListener):
@@ -13,24 +14,34 @@ class LoginListener(MegaRequestListener):
             'errorCode': e.getErrorCode(),
             'errorString': MegaError.getErrorString(e.getErrorCode()),
         }
-        jData = json.dumps(data)
-        self.webSocket.write_message(jData)
+        enviar_cliente(self.webSocket, data)
+        api.fetchNodes()
 
 
 class ListaNodosListener(MegaRequestListener):
     def __init__(self, webSocket):
         super(ListaNodosListener, self).__init__()
         self.webSocket = webSocket
+        self.cwd = None
 
     def onRequestFinish(self, api, request, e):
-
         nodos = []
-        cwd = api.getRootNode()
-        path = cwd
-        #salida.append('    .')
+        if not self.cwd:
+            self.cwd = api.getRootNode()
+        path = self.cwd
+
+        dictNodo = {
+            'nombre': '/',
+            'tipo': 'F'
+        }
+        nodos.append(dictNodo)
+
         if api.getParentNode(path) != None:
-            #salida.append('    ..')
-            pass
+            dictNodo = {
+                'nombre': '..',
+                'tipo': 'F'
+            }
+            nodos.append(dictNodo)
         nodes = api.getChildren(path)
 
         for i in range(nodes.size()):
@@ -41,21 +52,15 @@ class ListaNodosListener(MegaRequestListener):
             if node.getType() == MegaNode.TYPE_FILE:
                 dictNodo['tipo'] = 'A'
                 dictNodo['tamanno'] = node.getSize()
-                pass
             else:
                 dictNodo['tipo'] = 'F'
-                pass
             nodos.append(dictNodo)
 
         data = {
             'cmd': 'listaNodos',
             'nodos': nodos
         }
-
-        jData = json.dumps(data)
-
-        if self.webSocket.is_open:
-            self.webSocket.write_message(jData)
+        enviar_cliente(self.webSocket, data)
 
 
 class downloadListener(MegaTransferListener):
@@ -74,12 +79,5 @@ class downloadListener(MegaTransferListener):
             'totalBytes': transfer.getTotalBytes(),
             'velocidad': transfer.getSpeed()
         }
-        jData = json.dumps(data)
-        print jData
-        print len(self.cli)
-        #self.cli[0].
         for c in self.cli:
-            if c.web_socket_handler.is_open:
-                c.web_socket_handler.write_message(jData)
-
-
+            enviar_cliente(c.web_socket_handler, data)

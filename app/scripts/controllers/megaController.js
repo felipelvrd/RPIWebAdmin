@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    function megaController($scope,$mdDialog) {
+    function megaController($scope, $mdDialog) {
         var megaCtrl = this;
         megaCtrl.salida = '';
         megaCtrl.nodos = [];
@@ -101,13 +101,23 @@
             //alert("ERROR: " + evt.data);
         }
 
-        megaCtrl.descargar = function (nombre) {
-            var data = {
-                cmd: 'descargar',
-                nombre: nombre
-            };
-            mysocket.send(JSON.stringify(data));
+        megaCtrl.clkNodo = function (nodo) {
+            if (nodo.tipo === 'F') {
+                var data = {
+                    cmd: 'cd',
+                    carpeta: nodo.nombre
+                };
+                mysocket.send(JSON.stringify(data));
+            }
+            else if (nodo.tipo === 'A') {
+                var data = {
+                    cmd: 'descargar',
+                    nombre: nodo.nombre
+                };
+                mysocket.send(JSON.stringify(data));
+            }
         }
+
     }
 
     angular
