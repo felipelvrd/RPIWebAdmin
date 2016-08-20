@@ -15,52 +15,9 @@ class LoginListener(MegaRequestListener):
             'errorString': MegaError.getErrorString(e.getErrorCode()),
         }
         enviar_cliente(self.webSocket, data)
-        api.fetchNodes()
+        #api.fetchNodes()
 
 
-class ListaNodosListener(MegaRequestListener):
-    def __init__(self, webSocket):
-        super(ListaNodosListener, self).__init__()
-        self.webSocket = webSocket
-        self.cwd = None
-
-    def onRequestFinish(self, api, request, e):
-        nodos = []
-        if not self.cwd:
-            self.cwd = api.getRootNode()
-        path = self.cwd
-
-        dictNodo = {
-            'nombre': '/',
-            'tipo': 'F'
-        }
-        nodos.append(dictNodo)
-
-        if api.getParentNode(path) != None:
-            dictNodo = {
-                'nombre': '..',
-                'tipo': 'F'
-            }
-            nodos.append(dictNodo)
-        nodes = api.getChildren(path)
-
-        for i in range(nodes.size()):
-            node = nodes.get(i)
-            dictNodo = {
-                'nombre': node.getName()
-            }
-            if node.getType() == MegaNode.TYPE_FILE:
-                dictNodo['tipo'] = 'A'
-                dictNodo['tamanno'] = node.getSize()
-            else:
-                dictNodo['tipo'] = 'F'
-            nodos.append(dictNodo)
-
-        data = {
-            'cmd': 'listaNodos',
-            'nodos': nodos
-        }
-        enviar_cliente(self.webSocket, data)
 
 
 class downloadListener(MegaTransferListener):

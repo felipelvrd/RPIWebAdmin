@@ -6,7 +6,7 @@ from WebSocketServer.megaRPI.listener import downloadListener
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
 
 
-class MegaServer:
+class MegaServer(object):
     def __init__(self):
         self.clientes = []
         self._api = MegaApi('oowWWYRZ', None, None, 'megaRPI')
@@ -16,6 +16,7 @@ class MegaServer:
         megaCliente = MegaCliente(self._api, web_socket_handler)
         web_socket_handler.is_open = True
         self.clientes.append(megaCliente)
+        return megaCliente
 
     def eliminar_cliente(self, web_socket_handler):
         megaCliente = next(c for c in self.clientes if c.web_socket_handler == web_socket_handler)

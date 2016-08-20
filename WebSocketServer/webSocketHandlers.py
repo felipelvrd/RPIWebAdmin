@@ -12,7 +12,8 @@ class MegaWebSocketHandler(WebSocketHandler):
         pass
 
     def open(self):
-        mega_server.agregar_cliente(self)
+        mega_cliente = mega_server.agregar_cliente(self)
+        mega_cliente.listaNodos()
         print("WebSocket opened")
 
     def on_message(self, message):

@@ -45,6 +45,8 @@
 </div>
 
 <div ng-hide="!megaCtrl.isLoged">
+    <h2>Lista de archivos</h2>
+
     <div class="container" ng-hide="!megaCtrl.cargandoNodos">
         <md-progress-linear md-mode="query"></md-progress-linear>
         <div class="bottom-block">
@@ -56,7 +58,7 @@
 
         <md-content ng-hide="megaCtrl.cargandoNodos">
             <md-list flex>
-                <md-subheader class="md-no-sticky">Lista de archivos</md-subheader>
+                <md-subheader class="md-no-sticky">{{megaCtrl.path}}</md-subheader>
                 <md-list-item class="md-3-line" ng-repeat="n in megaCtrl.nodos" ng-click="megaCtrl.clkNodo(n)">
                     <i class="fa fa-3x fa-pull-left fa-border margin-derecha"
                        ng-class="(n.tipo ==='F') ? 'fa-folder' : 'fa-file'" aria-hidden="true"></i>

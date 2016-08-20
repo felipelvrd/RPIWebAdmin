@@ -23,10 +23,7 @@
 
 
         mysocket.onopen = function (evt) {
-            var cmd = {
-                cmd: 'isLogged'
-            };
-            mysocket.send(JSON.stringify(cmd));
+
         };
 
         mysocket.onmessage = function (evt) {
@@ -34,21 +31,13 @@
 
             switch (data.cmd) {
 
-                case 'isLogged':
-                    if (data.status === false) {
-                        megaCtrl.isLoged = false;
-                        //window.location.href = '#mega/login';
-                    } else {
-                        megaCtrl.isLoged = true;
-                        var cmd = {
-                            cmd: 'listaNodos'
-                        };
-                        mysocket.send(JSON.stringify(cmd));
-                    }
+                case 'no_logueado':
+                    megaCtrl.isLoged = false;
                     break;
                 case 'listaNodos':
 
                     megaCtrl.nodos = data.nodos;
+                    megaCtrl.path = data.path
                     megaCtrl.cargandoNodos = false;
                     //megaCtrl.nodos = [{nombre: 'primero'}];
                     $scope.$apply();
