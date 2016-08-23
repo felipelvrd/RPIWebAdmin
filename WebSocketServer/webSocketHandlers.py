@@ -13,7 +13,7 @@ class MegaWebSocketHandler(WebSocketHandler):
 
     def open(self):
         mega_cliente = mega_server.agregar_cliente(self)
-        mega_cliente.listaNodos()
+        mega_cliente.lista_nodos()
         print("WebSocket opened")
 
     def on_message(self, message):

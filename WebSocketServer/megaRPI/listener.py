@@ -1,12 +1,11 @@
-from mega import MegaRequestListener, MegaError, MegaNode, MegaTransferListener
-
+from mega import MegaRequestListener, MegaError, MegaTransferListener
 from WebSocketServer.megaRPI.utils import enviar_cliente
 
 
 class LoginListener(MegaRequestListener):
-    def __init__(self, webSocket):
+    def __init__(self, web_socket_handler):
         super(LoginListener, self).__init__()
-        self.webSocket = webSocket
+        self.webSocket = web_socket_handler
 
     def onRequestFinish(self, api, request, e):
         pass
@@ -18,9 +17,9 @@ class LoginListener(MegaRequestListener):
         enviar_cliente(self.webSocket, data)
 
 
-class downloadListener(MegaTransferListener):
+class DownloadListener(MegaTransferListener):
     def __init__(self, cli):
-        super(downloadListener, self).__init__()
+        super(DownloadListener, self).__init__()
         self.cli = cli
 
     def onRequestStart(self, api, request):

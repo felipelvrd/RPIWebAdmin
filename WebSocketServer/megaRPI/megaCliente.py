@@ -1,6 +1,7 @@
-from WebSocketServer.megaRPI.listener import LoginListener, MegaNode
+from WebSocketServer.megaRPI.listener import LoginListener
 from WebSocketServer.megaRPI.utils import enviar_cliente
 from WebSocketServer.megaRPI.megaNodosManager import MegaNodosManager
+
 
 class MegaCliente(object):
     def __init__(self, api, web_socket_handler):
@@ -34,13 +35,12 @@ class MegaCliente(object):
         enviar_cliente(self.web_socket_handler, data)
         return False
 
-    def listaNodos(self):
-        #self._api.fetchNodes(self.listaNodosListener)
+    def lista_nodos(self):
         if self.esta_logueado():
-            self.mega_nodos_manager.ListarNodos()
+            self.mega_nodos_manager.listar_nodos()
             pass
 
-    def recargarNodos(self):
+    def recargar_nodos(self):
         if self.esta_logueado():
             self.mega_nodos_manager.CargarNodos();
 

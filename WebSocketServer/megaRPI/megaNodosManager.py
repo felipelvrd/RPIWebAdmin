@@ -3,6 +3,7 @@ from WebSocketServer.megaRPI.config import DIRECTORIO_DESCARGAS
 from mega import MegaRequestListener, MegaNode
 from os.path import isfile
 
+
 class MegaNodosManager(object):
     def __init__(self, api, web_socket_handler):
         self.api = api
@@ -13,50 +14,50 @@ class MegaNodosManager(object):
     def CargarNodos(self):
         self.api.fetchNodes(self.obtenerNodosListener)
 
-    def ListarNodos(self):
-        if self.web_socket_handler.cwd == None:
+    def listar_nodos(self):
+        if self.web_socket_handler.cwd is None:
             self.CargarNodos()
         else:
-            data = self.ListarNodosStatic(self.api, self.web_socket_handler.cwd)
+            data = self.listar_nodos_static(self.api, self.web_socket_handler.cwd)
             enviar_cliente(self.web_socket_handler, data)
 
     @staticmethod
-    def ListarNodosStatic(api, cwd):
+    def listar_nodos_static(api, cwd):
         nodos = []
         path = cwd
-        dictNodo = {
+        dict_nodo = {
             'nombre': '/',
             'tipo': 'F'
         }
-        nodos.append(dictNodo)
-        if api.getParentNode(path) != None:
-            dictNodo = {
+        nodos.append(dict_nodo)
+        if api.getParentNode(path) is not None:
+            dict_nodo = {
                 'nombre': '..',
                 'tipo': 'F'
             }
-            nodos.append(dictNodo)
+            nodos.append(dict_nodo)
         nodes = api.getChildren(path)
 
         for i in range(nodes.size()):
             node = nodes.get(i)
             descargado = False
-            dictNodo = {
+            dict_nodo = {
                 'nombre': node.getName(),
                 'descargado': descargado
             }
             if node.getType() == MegaNode.TYPE_FILE:
-                dictNodo['tipo'] = 'A'
-                dictNodo['tamanno'] = node.getSize()
-                if (isfile(DIRECTORIO_DESCARGAS + node.getName())):
-                    dictNodo['descargado'] = True
+                dict_nodo['tipo'] = 'A'
+                dict_nodo['tamanno'] = node.getSize()
+                if isfile(DIRECTORIO_DESCARGAS + node.getName()):
+                    dict_nodo['descargado'] = True
             else:
-                dictNodo['tipo'] = 'F'
-            nodos.append(dictNodo)
+                dict_nodo['tipo'] = 'F'
+            nodos.append(dict_nodo)
 
-        nodePath = api.getNodePath(cwd)
+        node_path = api.getNodePath(cwd)
         data = {
             'cmd': 'listaNodos',
-            'path': nodePath,
+            'path': node_path,
             'nodos': nodos
         }
         return data
@@ -70,7 +71,7 @@ class MegaNodosManager(object):
             print('{}: Not a directory'.format(dir))
             return
         self.web_socket_handler.cwd = node
-        self.ListarNodos()
+        self.listar_nodos()
 
 class ObtenerNodosListener(MegaRequestListener):
     def __init__(self, webSocket):
@@ -79,7 +80,7 @@ class ObtenerNodosListener(MegaRequestListener):
 
     def onRequestFinish(self, api, request, e):
         self.webSocket.cwd = api.getRootNode()
-        data = MegaNodosManager.ListarNodosStatic(api, self.webSocket.cwd)
+        data = MegaNodosManager.listar_nodos_static(api, self.webSocket.cwd)
         enviar_cliente(self.webSocket, data)
 
 
