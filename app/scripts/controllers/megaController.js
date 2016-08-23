@@ -5,72 +5,95 @@
 (function () {
     'use strict';
 
-    function megaController($scope, $mdDialog) {
+    function megaController($scope, $mdDialog, ServerUrl) {
         var megaCtrl = this;
         megaCtrl.salida = '';
         megaCtrl.nodos = [];
-        var mysocket = new WebSocket('ws://localhost:8888/mega');
         megaCtrl.cargandoNodos = true;
         megaCtrl.isLoged = true;
         megaCtrl.email = '';
         megaCtrl.contrasenna = '';
         megaCtrl.inLogin = false;
 
+        var MegaServer = new WebSocket(ServerUrl + '/mega');
 
+        function enviarServer(data) {
+            MegaServer.send(JSON.stringify(data));
+        }
+
+        function noLogueado() {
+            megaCtrl.isLoged = false;
+        }
+
+        function listarNodos(data) {
+            megaCtrl.nodos = data.nodos;
+            megaCtrl.path = data.path;
+            megaCtrl.cargandoNodos = false;
+        }
+
+        function actualizarDescarga(data) {
+            megaCtrl.descarga = data;
+            megaCtrl.descarga.porcentaje = megaCtrl.descarga.bytesTransferidos * 100 / megaCtrl.descarga.totalBytes;
+        }
+
+        function cargarNodos() {
+            var data = {
+                cmd: 'recargarNodos'
+            };
+            enviarServer(data);
+            megaCtrl.cargandoNodos = true;
+        }
+
+        function login(data) {
+            if (data.errorCode === 0) {
+                megaCtrl.isLoged = true;
+                cargarNodos();
+            } else {
+                megaCtrl.inLogin = false;
+                $mdDialog.show(
+                    $mdDialog.alert()
+                        .parent(angular.element(document.querySelector('#popupContainer')))
+                        .clickOutsideToClose(true)
+                        .title('Código de error: ' + data.errorCode)
+                        .textContent('Ocurrio un error al intentar iniciar sesión, descripción del error: ' +
+                            data.errorString)
+                        .ariaLabel('Error inicio de sesión')
+                        .ok('OK')
+                );
+            }
+        }
+
+
+        // Cuando se sale de la página se cierra el socket
         $scope.$on('$destroy', function onDestroy() {
-            mysocket.close();
+            MegaServer.close();
         });
 
 
-        mysocket.onopen = function (evt) {
+        /*MegaServer.onopen = function (evt) {
 
-        };
+         };*/
 
-        mysocket.onmessage = function (evt) {
+        MegaServer.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
 
             switch (data.cmd) {
-
-                case 'no_logueado':
-                    megaCtrl.isLoged = false;
+                case 'noLogueado':
+                    noLogueado();
                     break;
                 case 'listaNodos':
-
-                    megaCtrl.nodos = data.nodos;
-                    megaCtrl.path = data.path
-                    megaCtrl.cargandoNodos = false;
-                    //megaCtrl.nodos = [{nombre: 'primero'}];
-                    $scope.$apply();
+                    listarNodos(data);
                     break;
                 case 'downloadUpdate':
-                    megaCtrl.descarga = data;
-                    megaCtrl.descarga.porcentaje = megaCtrl.descarga.bytesTransferidos * 100 / megaCtrl.descarga.totalBytes;
-                    $scope.$apply();
+                    actualizarDescarga(data);
                     break;
                 case 'login':
-                    if (data.errorCode === 0) {
-                        window.location.href = '#mega';
-                    } else {
-                        megaCtrl.inLogin = false;
-
-                        $scope.$apply();
-                        $mdDialog.show(
-                            $mdDialog.alert()
-                                .parent(angular.element(document.querySelector('#popupContainer')))
-                                .clickOutsideToClose(true)
-                                .title('Código de error: ' + data.errorCode)
-                                .textContent('Ocurrio un error al intentar iniciar sesión, descripción del error: ' +
-                                    data.errorString)
-                                .ariaLabel('Error inicio de sesion')
-                                .ok('OK')
-                            //.targetEvent(evt)
-                        );
-
-
-                    }
+                    login(data);
                     break;
             }
+            $scope.$apply();
         };
+
 
         megaCtrl.enviar = function () {
             megaCtrl.inLogin = true;
@@ -79,42 +102,38 @@
                 email: megaCtrl.email,
                 contrasenna: megaCtrl.contrasenna
             };
-            mysocket.send(JSON.stringify(data));
+            MegaServer.send(JSON.stringify(data));
         };
 
-        mysocket.onclose = function (evt) {
+        /*MegaServer.onclose = function (evt) {
             //alert("Websocket cerrado");
-        };
+        };*/
 
-        mysocket.onerror = function (evt) {
+        /*MegaServer.onerror = function (evt) {
             //alert("ERROR: " + evt.data);
-        }
+        };*/
 
-        megaCtrl.recargarNodos = function() {
-            var data = {
-                cmd: 'recargarNodos'
-            };
-            mysocket.send(JSON.stringify(data));
-            megaCtrl.cargandoNodos = true;
-        }
+        megaCtrl.recargarNodos = function () {
+            cargarNodos();
+        };
 
         megaCtrl.clkNodo = function (nodo) {
+            var data = {};
             if (nodo.tipo === 'F') {
-                var data = {
+                data = {
                     cmd: 'cd',
                     carpeta: nodo.nombre
                 };
-                mysocket.send(JSON.stringify(data));
+                MegaServer.send(JSON.stringify(data));
             }
             else if (nodo.tipo === 'A') {
-                var data = {
+                data = {
                     cmd: 'descargar',
                     nombre: nodo.nombre
                 };
-                mysocket.send(JSON.stringify(data));
+                MegaServer.send(JSON.stringify(data));
             }
-        }
-
+        };
     }
 
     angular

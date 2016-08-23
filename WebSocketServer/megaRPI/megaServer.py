@@ -30,17 +30,17 @@ class MegaServer(object):
         cmd = j_data['cmd']
 
         if cmd == 'isLogged':
-            mega_cliente.is_logged()
+            mega_cliente.esta_logueado()
         elif cmd == 'login':
             mega_cliente.login(j_data)
         elif cmd == 'listaNodos':
-            mega_cliente.listaNodos()
+            mega_cliente.lista_nodos()
         elif cmd == 'descargar':
             self.descargar(j_data, web_socket_handler.cwd)
         elif cmd == 'cd':
             mega_cliente.cd(j_data)
         elif cmd == 'recargarNodos':
-            mega_cliente.recargarNodos()
+            mega_cliente.recargar_nodos()
 
     def descargar(self, j_data, cwd):
         nombre = str(j_data['nombre'])

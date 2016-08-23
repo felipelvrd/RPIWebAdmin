@@ -30,7 +30,7 @@ class MegaCliente(object):
         if self._api.isLoggedIn():
             return True
         data = {
-            'cmd': 'no_logueado'
+            'cmd': 'noLogueado'
         }
         enviar_cliente(self.web_socket_handler, data)
         return False
@@ -45,6 +45,6 @@ class MegaCliente(object):
             self.mega_nodos_manager.CargarNodos();
 
     def cd(self, j_data):
-        dir = str(j_data['carpeta'])
-        self.mega_nodos_manager.CambiarNodo(dir)
+        directorio = str(j_data['carpeta'])
+        self.mega_nodos_manager.CambiarNodo(directorio)
 
