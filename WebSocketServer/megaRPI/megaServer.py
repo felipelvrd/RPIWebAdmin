@@ -4,6 +4,7 @@ from mega import MegaApi
 
 from WebSocketServer.megaRPI.listener import downloadListener
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
+from WebSocketServer.megaRPI.config import DIRECTORIO_DESCARGAS
 
 
 class MegaServer(object):
@@ -35,18 +36,19 @@ class MegaServer(object):
         elif cmd == 'listaNodos':
             megaCliente.listaNodos()
         elif cmd == 'descargar':
-            self.descargar(j_data)
+            self.descargar(j_data, web_socket_handler.cwd)
         elif cmd == 'cd':
             megaCliente.cd(j_data)
+        elif cmd == 'recargarNodos':
+            megaCliente.recargarNodos();
 
-    def descargar(self, j_data):
+    def descargar(self, j_data, cwd):
         nombre = str(j_data['nombre'])
-        cwd = self._api.getRootNode()
         node = self._api.getNodeByPath(str(nombre), cwd)
         if node == None:
             print ('Node not found')
             return
-        self._api.startDownload(node, './', self.DownloadListener)
+        self._api.startDownload(node, DIRECTORIO_DESCARGAS, self.DownloadListener)
 
         """elif cmd == 'getEmail':
             self.get_email()"""

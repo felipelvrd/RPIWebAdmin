@@ -90,6 +90,14 @@
             //alert("ERROR: " + evt.data);
         }
 
+        megaCtrl.recargarNodos = function() {
+            var data = {
+                cmd: 'recargarNodos'
+            };
+            mysocket.send(JSON.stringify(data));
+            megaCtrl.cargandoNodos = true;
+        }
+
         megaCtrl.clkNodo = function (nodo) {
             if (nodo.tipo === 'F') {
                 var data = {

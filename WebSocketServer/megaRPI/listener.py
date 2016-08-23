@@ -9,15 +9,13 @@ class LoginListener(MegaRequestListener):
         self.webSocket = webSocket
 
     def onRequestFinish(self, api, request, e):
+        pass
         data = {
             'cmd': 'login',
             'errorCode': e.getErrorCode(),
             'errorString': MegaError.getErrorString(e.getErrorCode()),
         }
         enviar_cliente(self.webSocket, data)
-        #api.fetchNodes()
-
-
 
 
 class downloadListener(MegaTransferListener):

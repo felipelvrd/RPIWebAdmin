@@ -9,7 +9,9 @@ class MegaCliente(object):
         self.loginListener = LoginListener(self.web_socket_handler)
         self.mega_nodos_manager = MegaNodosManager(self._api, self.web_socket_handler)
 
-
+    def __del__(self):
+        self._api.removeRequestListener(self.loginListener)
+        self._api.removeRequestListener(self.mega_nodos_manager.obtenerNodosListener)
 
     def login(self, j_data):
         usuario = str(j_data['email'])
@@ -37,6 +39,10 @@ class MegaCliente(object):
         if self.esta_logueado():
             self.mega_nodos_manager.ListarNodos()
             pass
+
+    def recargarNodos(self):
+        if self.esta_logueado():
+            self.mega_nodos_manager.CargarNodos();
 
     def cd(self, j_data):
         dir = str(j_data['carpeta'])
