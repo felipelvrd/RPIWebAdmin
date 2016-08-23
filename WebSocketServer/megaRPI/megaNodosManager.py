@@ -62,21 +62,22 @@ class MegaNodosManager(object):
         }
         return data
 
-    def CambiarNodo(self, dir):
-        node = self.api.getNodeByPath(dir, self.web_socket_handler.cwd)
-        if node == None:
-            print('{}: No such file or directory'.format(dir))
+    def CambiarNodo(self, directorio):
+        node = self.api.getNodeByPath(directorio, self.web_socket_handler.cwd)
+        if node is None:
+            print('{}: No such file or directory'.format(directorio))
             return
         if node.getType() == MegaNode.TYPE_FILE:
-            print('{}: Not a directory'.format(dir))
+            print('{}: Not a directory'.format(directorio))
             return
         self.web_socket_handler.cwd = node
         self.listar_nodos()
 
+
 class ObtenerNodosListener(MegaRequestListener):
-    def __init__(self, webSocket):
+    def __init__(self, web_socket_handler):
         super(ObtenerNodosListener, self).__init__()
-        self.webSocket = webSocket
+        self.webSocket = web_socket_handler
 
     def onRequestFinish(self, api, request, e):
         self.webSocket.cwd = api.getRootNode()
