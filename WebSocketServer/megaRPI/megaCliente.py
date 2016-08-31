@@ -42,7 +42,7 @@ class MegaCliente(object):
 
     def recargar_nodos(self):
         if self.esta_logueado():
-            self.mega_nodos_manager.CargarNodos();
+            self.mega_nodos_manager.CargarNodos()
 
     def cd(self, j_data):
         directorio = str(j_data['carpeta'])

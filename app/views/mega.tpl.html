@@ -89,4 +89,7 @@
     <h3>Descarga Activa</h3>
     <md-progress-linear md-mode="determinate" value="{{megaCtrl.descarga.porcentaje}}"></md-progress-linear>
     {{megaCtrl.descarga.nombre}} - {{megaCtrl.descarga.velocidad/1024 | number: 2}}KB/s
+
+    <br>
+    {{megaCtrl.descarga.cola_descargas}}
 </div>

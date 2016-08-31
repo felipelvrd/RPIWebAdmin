@@ -11,7 +11,8 @@ class MegaServer(object):
     def __init__(self):
         self.clientes = []
         self._api = MegaApi('oowWWYRZ', None, None, 'megaRPI')
-        self.DownloadListener = DownloadListener(self.clientes)
+        self.cola_descargas = []
+        self.downloadListener = DownloadListener(self.clientes, self.cola_descargas)
 
     def agregar_cliente(self, web_socket_handler):
         mega_cliente = MegaCliente(self._api, web_socket_handler)
@@ -36,16 +37,23 @@ class MegaServer(object):
         elif cmd == 'listaNodos':
             mega_cliente.lista_nodos()
         elif cmd == 'descargar':
-            self.descargar(j_data, web_socket_handler.cwd)
+            self.agregar_descarga(j_data, web_socket_handler.cwd)
         elif cmd == 'cd':
             mega_cliente.cd(j_data)
         elif cmd == 'recargarNodos':
             mega_cliente.recargar_nodos()
 
-    def descargar(self, j_data, cwd):
+    def agregar_descarga(self, j_data, cwd):
         nombre = str(j_data['nombre'])
         node = self._api.getNodeByPath(str(nombre), cwd)
         if node is None:
             print ('Node not found')
             return
-        self._api.startDownload(node, DIRECTORIO_DESCARGAS, self.DownloadListener)
+        self.cola_descargas.append(node)
+        self.iniciar_descarga()
+
+    def iniciar_descarga(self):
+        if not self.downloadListener.descarga_activa:
+            if len(self.cola_descargas) > 0:
+                nodo = self.cola_descargas.pop(0)
+                self._api.startDownload(nodo, DIRECTORIO_DESCARGAS, self.downloadListener)
