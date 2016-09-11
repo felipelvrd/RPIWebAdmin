@@ -6,3 +6,4 @@ app/lib
 .directory
 app/scripts/templates.js
 app/stylesheets/*.css
+*.sqlite
