@@ -1,8 +1,7 @@
 import json
 
 from mega import MegaApi
-
-from WebSocketServer.config import DIRECTORIO_DESCARGAS
+from WebSocketServer.megaRPI.utils import iniciar_descarga
 from WebSocketServer.megaRPI.listener import DownloadListener
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
 
@@ -52,7 +51,4 @@ class MegaServer(object):
         self.iniciar_descarga()
 
     def iniciar_descarga(self):
-        if not self.downloadListener.descarga_activa:
-            if len(self.cola_descargas) > 0:
-                nodo = self.cola_descargas.pop(0)
-                self._api.startDownload(nodo, DIRECTORIO_DESCARGAS, self.downloadListener)
+        iniciar_descarga(self.downloadListener, self.cola_descargas, self._api)

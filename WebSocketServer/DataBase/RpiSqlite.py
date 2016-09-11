@@ -16,7 +16,7 @@ def crearTablas(conexion):
     conexion.execute("""CREATE TABLE mega_descargas
                                         (
                                             ID INTEGER PRIMARY KEY,
-                                            NOMBRE_ARCHIVO TEXT NOT NULL,
+                                            URI_PUBLICO TEXT NOT NULL,
                                             FECHA DATETIME NOT NULL
                                         )""")
     conexion.commit()
