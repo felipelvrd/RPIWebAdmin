@@ -1,6 +1,9 @@
 from mega import MegaRequestListener, MegaError, MegaTransferListener
+
+from WebSocketServer.config import DIRECTORIO_DESCARGAS
 from WebSocketServer.megaRPI.utils import enviar_cliente
-from WebSocketServer.megaRPI.config import DIRECTORIO_DESCARGAS
+from WebSocketServer.DataBase.MegaSQLite import registrar_descarga
+
 
 class LoginListener(MegaRequestListener):
     def __init__(self, web_socket_handler):
@@ -25,6 +28,8 @@ class DownloadListener(MegaTransferListener):
         self.cola_descargas = cola_descargas
 
     def onTransferFinish(self, api, transfer, error):
+        if error.getErrorCode() == MegaError.API_OK:
+            registrar_descarga(transfer.getFileName())
         if len(self.cola_descargas) > 0:
             nodo = self.cola_descargas.pop(0)
             api.startDownload(nodo, DIRECTORIO_DESCARGAS, self)

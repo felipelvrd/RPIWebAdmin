@@ -1,7 +1,10 @@
-from WebSocketServer.megaRPI.utils import enviar_cliente
-from WebSocketServer.megaRPI.config import DIRECTORIO_DESCARGAS
-from mega import MegaRequestListener, MegaNode
 from os.path import isfile
+
+from mega import MegaRequestListener, MegaNode
+
+from WebSocketServer.config import DIRECTORIO_DESCARGAS
+from WebSocketServer.megaRPI.utils import enviar_cliente
+from WebSocketServer.DataBase.MegaSQLite import existe_descarga
 
 
 class MegaNodosManager(object):
@@ -48,7 +51,7 @@ class MegaNodosManager(object):
             if node.getType() == MegaNode.TYPE_FILE:
                 dict_nodo['tipo'] = 'A'
                 dict_nodo['tamanno'] = node.getSize()
-                if isfile(DIRECTORIO_DESCARGAS + node.getName()):
+                if existe_descarga(node.getName()):
                     dict_nodo['descargado'] = True
             else:
                 dict_nodo['tipo'] = 'F'

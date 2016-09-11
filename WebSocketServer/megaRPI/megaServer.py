@@ -2,10 +2,9 @@ import json
 
 from mega import MegaApi
 
+from WebSocketServer.config import DIRECTORIO_DESCARGAS
 from WebSocketServer.megaRPI.listener import DownloadListener
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
-from WebSocketServer.megaRPI.config import DIRECTORIO_DESCARGAS
-
 
 class MegaServer(object):
     def __init__(self):
