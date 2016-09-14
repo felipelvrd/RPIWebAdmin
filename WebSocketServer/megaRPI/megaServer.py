@@ -1,9 +1,9 @@
 import json
-
-from mega import MegaApi
-from WebSocketServer.megaRPI.utils import iniciar_descarga
-from WebSocketServer.megaRPI.listener import DownloadListener
+from mega import MegaApi, MegaError, MegaTransferListener
+from WebSocketServer.megaRPI.utils import enviar_cliente
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
+from WebSocketServer.DataBase.MegaSQLite import registrar_descarga
+from WebSocketServer.config import DIRECTORIO_DESCARGAS
 
 
 class MegaServer(object):
@@ -61,3 +61,49 @@ class MegaServer(object):
 
     def iniciar_descarga(self):
         iniciar_descarga(self.downloadListener, self.cola_descargas, self._api)
+
+
+class DownloadListener(MegaTransferListener):
+    def __init__(self, cli, cola_descargas):
+        super(DownloadListener, self).__init__()
+        self.cli = cli
+        self.cola_descargas = cola_descargas
+        self.nodo_descarga_actual = None
+
+    def onTransferFinish(self, api, transfer, error):
+        if error.getErrorCode() == MegaError.API_OK:
+            registrar_descarga(api.getNodePath(self.nodo_descarga_actual))
+        self.nodo_descarga_actual = None
+        iniciar_descarga(self, self.cola_descargas, api)
+
+    def onTransferStart(self, api, transfer):
+        pass
+
+    def onTransferData(self, api, transfer, buffer, size):
+        return super(DownloadListener, self).onTransferData(api, transfer, buffer, size)
+
+    def onTransferTemporaryError(self, api, transfer, error):
+        return super(DownloadListener, self).onTransferTemporaryError(api, transfer, error)
+
+    def onTransferUpdate(self, api, transfer):
+        cola_descargas_str = []
+        for i in self.cola_descargas:
+            cola_descargas_str.append(i.getName())
+        data = {
+            'cmd': 'downloadUpdate',
+            'nombre': transfer.getFileName(),
+            'bytesTransferidos': transfer.getTransferredBytes(),
+            'totalBytes': transfer.getTotalBytes(),
+            'velocidad': transfer.getSpeed(),
+            'cola_descargas': cola_descargas_str
+        }
+        for c in self.cli:
+            enviar_cliente(c.web_socket_handler, data)
+
+
+def iniciar_descarga(download_listener, cola_descargas, api):
+    if download_listener.nodo_descarga_actual is None:
+        if len(cola_descargas) > 0:
+            nodo = cola_descargas.pop(0)
+            download_listener.nodo_descarga_actual = nodo
+            api.startDownload(nodo, DIRECTORIO_DESCARGAS, download_listener)

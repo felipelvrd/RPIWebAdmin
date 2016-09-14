@@ -1,4 +1,4 @@
-from WebSocketServer.megaRPI.listener import LoginListener
+from mega import MegaRequestListener, MegaError
 from WebSocketServer.megaRPI.utils import enviar_cliente
 from WebSocketServer.megaRPI.megaNodosManager import MegaNodosManager
 
@@ -48,3 +48,17 @@ class MegaCliente(object):
         directorio = str(j_data['carpeta'])
         self.mega_nodos_manager.CambiarNodo(directorio)
 
+
+class LoginListener(MegaRequestListener):
+    def __init__(self, web_socket_handler):
+        super(LoginListener, self).__init__()
+        self.webSocket = web_socket_handler
+
+    def onRequestFinish(self, api, request, e):
+        pass
+        data = {
+            'cmd': 'login',
+            'errorCode': e.getErrorCode(),
+            'errorString': MegaError.getErrorString(e.getErrorCode()),
+        }
+        enviar_cliente(self.webSocket, data)
