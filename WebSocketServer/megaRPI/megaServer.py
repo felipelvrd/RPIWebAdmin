@@ -5,6 +5,7 @@ from WebSocketServer.megaRPI.utils import iniciar_descarga
 from WebSocketServer.megaRPI.listener import DownloadListener
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
 
+
 class MegaServer(object):
     def __init__(self):
         self.clientes = []
@@ -44,8 +45,16 @@ class MegaServer(object):
     def agregar_descarga(self, j_data, cwd):
         nombre = str(j_data['nombre'])
         node = self._api.getNodeByPath(str(nombre), cwd)
+        path = self._api.getNodePath(node)
         if node is None:
             print ('Node not found')
+            return
+        # Verifica que no se este descargando ya el archivo
+        if self.downloadListener.nodo_descarga_actual:
+            if self._api.getNodePath(self.downloadListener.nodo_descarga_actual) == path:
+                return
+        # Verifica que el archivo no este en la lista de descargas
+        if next((c for c in self.cola_descargas if self._api.getNodePath(c) == path), None) is not None:
             return
         self.cola_descargas.append(node)
         self.iniciar_descarga()
