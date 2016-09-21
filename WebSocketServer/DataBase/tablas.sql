@@ -1,3 +1,8 @@
+--------------------------------------
+--  Tablas para la aplicación MEGA  --
+--------------------------------------
+
+-- Log de descargas completadas
 CREATE TABLE mega_descargas
 (
     ID INTEGER PRIMARY KEY,
@@ -5,6 +10,7 @@ CREATE TABLE mega_descargas
     FECHA DATETIME NOT NULL
 );
 
+-- Parámetros para la app MEGA
 CREATE TABLE mega_parametros
 (
     ID INTEGER PRIMARY KEY,

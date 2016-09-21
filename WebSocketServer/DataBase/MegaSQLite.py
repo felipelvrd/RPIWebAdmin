@@ -22,6 +22,6 @@ def get_parametro(clave):
     cursor = conexion.cursor()
     cursor.execute("SELECT VALOR FROM mega_parametros WHERE CLAVE = ?", [clave])
     data = cursor.fetchone()
-    if len(data) > 0:
-        return data[0]
+    if data is not None:
+        return str(data[0])
     return None

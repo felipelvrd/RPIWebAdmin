@@ -16,8 +16,8 @@ class MegaServer(object):
 
     def auto_login(self):
         if not self._api.isLoggedIn():
-            id = str(get_parametro('ID'))
-            contrasenna = str(get_parametro('PASSWORD'))
+            id = get_parametro('ID')
+            contrasenna = get_parametro('PASSWORD')
             if id is not None and contrasenna is not None:
                 self._api.login(id, contrasenna)
 
