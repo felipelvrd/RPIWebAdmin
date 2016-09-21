@@ -1,6 +1,6 @@
 import json
 from mega import MegaApi, MegaError, MegaTransferListener
-from WebSocketServer.megaRPI.utils import enviar_cliente
+from WebSocketServer.megaRPI.utils import enviar_cliente, mkdir_recursivo
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
 from WebSocketServer.DataBase.MegaSQLite import registrar_descarga
 from WebSocketServer.config import DIRECTORIO_DESCARGAS
@@ -106,4 +106,6 @@ def iniciar_descarga(download_listener, cola_descargas, api):
         if len(cola_descargas) > 0:
             nodo = cola_descargas.pop(0)
             download_listener.nodo_descarga_actual = nodo
-            api.startDownload(nodo, DIRECTORIO_DESCARGAS, download_listener)
+            dir_descarga = DIRECTORIO_DESCARGAS + api.getNodePath(api.getParentNode(nodo)) + '/'
+            mkdir_recursivo(dir_descarga)
+            api.startDownload(nodo, dir_descarga, download_listener)
