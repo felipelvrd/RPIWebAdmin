@@ -13,10 +13,7 @@ def abrir_conexion():
 
 
 def crearTablas(conexion):
-    conexion.execute("""CREATE TABLE mega_descargas
-                                        (
-                                            ID INTEGER PRIMARY KEY,
-                                            URI_PUBLICO TEXT NOT NULL,
-                                            FECHA DATETIME NOT NULL
-                                        )""")
+    sql_file = open('DataBase/tablas.sql', 'r')
+    sql_script = sql_file.read()
+    conexion.executescript(sql_script)
     conexion.commit()
