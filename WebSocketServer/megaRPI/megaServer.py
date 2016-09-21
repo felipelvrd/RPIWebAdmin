@@ -4,7 +4,7 @@ from WebSocketServer.megaRPI.utils import enviar_cliente, mkdir_recursivo
 from WebSocketServer.megaRPI.megaCliente import MegaCliente
 from WebSocketServer.DataBase.MegaSQLite import registrar_descarga
 from WebSocketServer.config import DIRECTORIO_DESCARGAS
-
+from WebSocketServer.DataBase.MegaSQLite import get_parametro
 
 class MegaServer(object):
     def __init__(self):
@@ -12,6 +12,14 @@ class MegaServer(object):
         self._api = MegaApi('oowWWYRZ', None, None, 'megaRPI')
         self.cola_descargas = []
         self.downloadListener = DownloadListener(self.clientes, self.cola_descargas)
+        self.auto_login()
+
+    def auto_login(self):
+        if not self._api.isLoggedIn():
+            id = str(get_parametro('ID'))
+            contrasenna = str(get_parametro('PASSWORD'))
+            if id is not None and contrasenna is not None:
+                self._api.login(id, contrasenna)
 
     def agregar_cliente(self, web_socket_handler):
         mega_cliente = MegaCliente(self._api, web_socket_handler)

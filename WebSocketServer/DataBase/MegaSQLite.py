@@ -15,3 +15,13 @@ def existe_descarga(uri_publico):
     if data[0] > 0:
         return True
     return False
+
+
+def get_parametro(clave):
+    conexion = abrir_conexion()
+    cursor = conexion.cursor()
+    cursor.execute("SELECT VALOR FROM mega_parametros WHERE CLAVE = ?", [clave])
+    data = cursor.fetchone()
+    if len(data) > 0:
+        return data[0]
+    return None
