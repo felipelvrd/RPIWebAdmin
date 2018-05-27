@@ -55,7 +55,6 @@ class LoginListener(MegaRequestListener):
         self.webSocket = web_socket_handler
 
     def onRequestFinish(self, api, request, e):
-        pass
         data = {
             'cmd': 'login',
             'errorCode': e.getErrorCode(),

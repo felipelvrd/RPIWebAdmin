@@ -9,6 +9,7 @@ def abrir_conexion():
         crearTablas(conexion)
     else:
         conexion = sqlite3.connect(RUTA_ARCHIVO_BASE_DATOS)
+    conexion.text_factory = str
     return conexion
 
 

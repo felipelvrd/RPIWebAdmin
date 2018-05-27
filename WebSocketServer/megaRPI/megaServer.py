@@ -33,7 +33,7 @@ class MegaServer(object):
         self.clientes.remove(mega_cliente)
 
     def enrutador(self, web_socket_handler, mensaje):
-        j_data = json.loads(mensaje.decode('utf-8'))
+        j_data = json.loads(mensaje.encode('utf-8'))
         mega_cliente = next(c for c in self.clientes if c.web_socket_handler == web_socket_handler)
         cmd = j_data['cmd']
 
@@ -51,7 +51,7 @@ class MegaServer(object):
             mega_cliente.recargar_nodos()
 
     def agregar_descarga(self, j_data, cwd):
-        nombre = str(j_data['nombre'])
+        nombre = str(j_data['nombre'].encode('utf-8'))
         node = self._api.getNodeByPath(str(nombre), cwd)
         path = self._api.getNodePath(node)
         if node is None:
