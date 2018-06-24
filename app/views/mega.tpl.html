@@ -91,5 +91,15 @@
     {{megaCtrl.descarga.nombre}} - {{megaCtrl.descarga.velocidad/1024 | number: 2}}KB/s
 
     <br>
-    {{megaCtrl.descarga.cola_descargas}}
+        <md-list flex>
+            <md-subheader class="md-no-sticky">Cola de descargas</md-subheader>
+            <md-list-item class="md-3-line" ng-repeat="n in megaCtrl.descarga.cola_descargas">
+                <i class="fa fa-3x fa-pull-left fa-border margin-derecha fa-download" aria-hidden="true"></i>
+                <div class="md-list-item-text" layout="column">
+                   <h3>{{ n }}</h3> <h2></h2>
+                </div>
+            </md-list-item>
+
+        </md-list>
+
 </div>
